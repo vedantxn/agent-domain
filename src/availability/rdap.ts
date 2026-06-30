@@ -1,5 +1,7 @@
 const RDAP_BOOTSTRAP_URL = "https://data.iana.org/rdap/dns.json";
 
+const PREMIUM_STATUS_MARKERS = ["premium", "reserved", "allocated"];
+
 let bootstrapCache: Record<string, string> | null = null;
 
 async function getBootstrap(): Promise<Record<string, string>> {
@@ -32,6 +34,35 @@ function extractTld(domain: string): string {
   return parts.slice(1).join(".");
 }
 
+function isPremiumStatus(statuses: string[]): boolean {
+  return statuses.some((status) =>
+    PREMIUM_STATUS_MARKERS.some((marker) =>
+      status.toLowerCase().includes(marker)
+    )
+  );
+}
+
+export async function fetchRdapWithRetry(
+  url: string,
+  options: { signal?: AbortSignal; maxRetries?: number } = {}
+): Promise<Response> {
+  const maxRetries = options.maxRetries ?? 3;
+  let delayMs = 500;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const res = await fetch(url, { signal: options.signal });
+
+    if (res.status !== 429 || attempt === maxRetries) {
+      return res;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+    delayMs *= 2;
+  }
+
+  throw new Error("RDAP fetch failed after retries");
+}
+
 export async function checkRdap(
   domain: string
 ): Promise<{ available: boolean | null; premium: boolean }> {
@@ -54,7 +85,7 @@ export async function checkRdap(
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
 
-    const res = await fetch(url, { signal: controller.signal });
+    const res = await fetchRdapWithRetry(url, { signal: controller.signal });
     clearTimeout(timeout);
 
     if (res.status === 404) {
@@ -71,6 +102,8 @@ export async function checkRdap(
     };
 
     const statuses = data.status || [];
+    const premium = isPremiumStatus(statuses);
+
     const isActive = statuses.some(
       (s) =>
         s === "active" ||
@@ -80,17 +113,17 @@ export async function checkRdap(
     );
 
     if (isActive) {
-      return { available: false, premium: false };
+      return { available: false, premium };
     }
 
     const isRedemption = statuses.some(
       (s) => s === "redemption period" || s === "pending delete"
     );
     if (isRedemption) {
-      return { available: false, premium: false };
+      return { available: false, premium };
     }
 
-    return { available: false, premium: false };
+    return { available: false, premium };
   } catch (err) {
     if (err instanceof Error && err.name === "AbortError") {
       return { available: null, premium: false };
