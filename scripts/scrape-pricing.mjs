@@ -4,7 +4,7 @@
  * Pricing scraper — runs in CI with maintainer's API keys.
  * Fetches TLD pricing from registrar APIs and writes data/pricing.json.
  *
- * Usage: PORKBUN_API_KEY=x PORKBUN_SECRET=x CLOUDFLARE_API_TOKEN=x node scripts/scrape-pricing.mjs
+ * Usage: PORKBUN_API_KEY=x PORKBUN_SECRET=x CLOUDFLARE_API_TOKEN=x CLOUDFLARE_ACCOUNT_ID=x node scripts/scrape-pricing.mjs
  */
 
 import { writeFileSync, readFileSync } from "node:fs";
@@ -63,22 +63,82 @@ async function scrapePorkbun() {
   }
 }
 
+const TRACKED_TLDS = ["com", "io", "ai", "dev", "net", "org", "xyz", "app"];
+
+function probeDomainsForTld(tld) {
+  return [
+    `agentdomain-probe-${tld}.${tld}`,
+    `zzzdapriceprobe${tld}.${tld}`,
+    `agentdomain-price-probe-${tld}.${tld}`,
+  ];
+}
+
 async function scrapeCloudflare() {
   const token = process.env.CLOUDFLARE_API_TOKEN;
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
 
-  if (!token) {
-    console.warn("CLOUDFLARE: skipping (no API token)");
+  if (!token || !accountId) {
+    console.warn("CLOUDFLARE: skipping (no API token or account ID)");
     return null;
   }
 
-  // Cloudflare doesn't have a bulk pricing endpoint, but their TLD policies page
-  // lists supported TLDs. We'll use their registrar API to check individual TLDs.
-  // For now, use known at-cost pricing from their published data.
-  console.log("CLOUDFLARE: using published at-cost pricing data");
+  const results = {};
+  const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/registrar/domain-check`;
 
-  // Cloudflare at-cost pricing is deterministic — it's registry fee + ICANN fee.
-  // We maintain a subset of common TLDs with known Cloudflare pricing.
-  return null;
+  for (const tld of TRACKED_TLDS) {
+    let priced = false;
+
+    for (const domain of probeDomainsForTld(tld)) {
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ domains: [domain] }),
+        });
+
+        if (!res.ok) {
+          console.warn(`CLOUDFLARE: ${tld} API returned ${res.status}`);
+          break;
+        }
+
+        const data = await res.json();
+        const entry = data?.result?.domains?.[0];
+        if (!entry?.registrable || !entry.pricing) {
+          continue;
+        }
+
+        const reg = parseFloat(entry.pricing.registration_cost);
+        const ren = parseFloat(entry.pricing.renewal_cost);
+        if (Number.isNaN(reg) || Number.isNaN(ren)) {
+          continue;
+        }
+
+        results[tld] = {
+          registrar: "cloudflare",
+          year1_usd_cents: Math.round(reg * 100),
+          renewal_usd_cents: Math.round(ren * 100),
+          transfer_usd_cents: Math.round(reg * 100),
+          url: "https://www.cloudflare.com/products/registrar/",
+          price_updated_at: NOW,
+        };
+        priced = true;
+        break;
+      } catch (err) {
+        console.warn(`CLOUDFLARE: ${tld} error - ${err.message}`);
+        break;
+      }
+    }
+
+    if (!priced) {
+      console.warn(`CLOUDFLARE: could not price TLD .${tld}`);
+    }
+  }
+
+  console.log(`CLOUDFLARE: scraped ${Object.keys(results).length} TLDs`);
+  return Object.keys(results).length > 0 ? results : null;
 }
 
 async function main() {
@@ -111,9 +171,20 @@ async function main() {
     registrars.add("porkbun");
     for (const [tld, price] of Object.entries(porkbunData)) {
       if (!tlds[tld]) tlds[tld] = { prices: [] };
-      // Remove old porkbun entry
       tlds[tld].prices = tlds[tld].prices.filter(
         (p) => p.registrar !== "porkbun"
+      );
+      tlds[tld].prices.push(price);
+    }
+  }
+
+  // Merge Cloudflare data
+  if (cloudflareData) {
+    registrars.add("cloudflare");
+    for (const [tld, price] of Object.entries(cloudflareData)) {
+      if (!tlds[tld]) tlds[tld] = { prices: [] };
+      tlds[tld].prices = tlds[tld].prices.filter(
+        (p) => p.registrar !== "cloudflare"
       );
       tlds[tld].prices.push(price);
     }
