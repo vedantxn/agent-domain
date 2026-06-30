@@ -2,6 +2,19 @@ import { defineCommand, runMain } from "citty";
 import { checkDomain, checkDomains } from "./index.js";
 import type { BatchCheckResult, DomainResult } from "./types.js";
 
+function relativeTime(iso: string): string | null {
+  const ms = Date.parse(iso);
+  if (Number.isNaN(ms)) return null;
+  const diffSec = Math.max(0, Math.round((Date.now() - ms) / 1000));
+  if (diffSec < 60) return "just now";
+  const diffMin = Math.round(diffSec / 60);
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.round(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  const diffDay = Math.round(diffHr / 24);
+  return `${diffDay}d ago`;
+}
+
 function formatTable(results: DomainResult[]): string {
   const lines: string[] = [];
 
@@ -26,6 +39,16 @@ function formatTable(results: DomainResult[]): string {
         lines.push(
           `  ${p.registrar.padEnd(14)} ${y1.padEnd(10)} ${ren}${tag}`
         );
+      }
+      const lastChanged = r.prices
+        .map((p) => p.price_updated_at)
+        .filter((t) => !Number.isNaN(Date.parse(t)))
+        .sort()
+        .at(-1);
+      const rel = lastChanged ? relativeTime(lastChanged) : null;
+      if (rel) {
+        lines.push("");
+        lines.push(`  prices last changed: ${rel}`);
       }
     } else if (r.available && r.prices.length === 0) {
       lines.push("  (pricing data not available)");

@@ -125,7 +125,7 @@ Tools available:
 
 ## How it works
 
-1. **Pricing data** is scraped daily from registrar APIs (Porkbun, Cloudflare, Namecheap, GoDaddy, Spaceship) by the maintainer's CI and published as a static JSON file. Your CLI fetches this file and caches it locally for 1 hour. No API keys needed.
+1. **Pricing data** is verified hourly against registrar APIs (Porkbun, Cloudflare, Namecheap, GoDaddy, Spaceship) by the maintainer's CI and published as a static JSON file. Registrar list prices are per-TLD and change rarely, so each price carries a `price_updated_at` marking when it last actually changed (not when it was last fetched). Your CLI fetches this file and caches it locally for 1 hour. No API keys needed.
 
 2. **Availability** is checked live via RDAP (the modern replacement for WHOIS). Free, standardized, no authentication required.
 
@@ -143,7 +143,7 @@ Currently tracking pricing for 8+ TLDs across 5 registrars:
 | GoDaddy | Major TLDs |
 | Spaceship | Major TLDs |
 
-Pricing updates daily. Data may be up to 24 hours stale.
+Pricing is verified hourly. Since per-TLD list prices change rarely, `price_updated_at` reflects when a price last changed rather than the verification time.
 
 ## License
 

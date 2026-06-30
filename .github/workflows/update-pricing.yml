@@ -2,7 +2,7 @@ name: Update Pricing Data
 
 on:
   schedule:
-    - cron: "0 6 * * *" # Daily at 6am UTC
+    - cron: "0 * * * *" # Hourly; commits only when prices actually change
   workflow_dispatch: # Manual trigger
 
 jobs:
