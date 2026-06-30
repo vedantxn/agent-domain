@@ -4,6 +4,10 @@ import { defineCommand, runMain } from "citty";
 import { checkDomain, checkDomains } from "./index.js";
 import type { DomainResult } from "./types.js";
 
+if (process.argv.includes("--mcp")) {
+  await import("./mcp.js");
+} else {
+
 function formatTable(results: DomainResult[]): string {
   const lines: string[] = [];
 
@@ -38,12 +42,9 @@ function formatTable(results: DomainResult[]): string {
   return lines.join("\n");
 }
 
-const main = defineCommand({
+const checkCmd = defineCommand({
   meta: {
-    name: "agent-domain",
-    version: "0.1.0",
-    description:
-      "Domain availability + cheapest registrar price. Zero config.",
+    description: "Check domain availability and registrar pricing",
   },
   args: {
     domains: {
@@ -109,4 +110,18 @@ const main = defineCommand({
   },
 });
 
+const main = defineCommand({
+  meta: {
+    name: "agent-domain",
+    version: "0.1.0",
+    description:
+      "Domain availability + cheapest registrar price. Zero config.",
+  },
+  subCommands: {
+    check: checkCmd,
+  },
+});
+
 runMain(main);
+
+}
