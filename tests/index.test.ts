@@ -35,6 +35,29 @@ describe("checkDomain", () => {
     expect(result.tld_pricing).toBe(true);
   });
 
+  it("sets pricing_stale when pricing cache is stale", async () => {
+    const { checkAvailability } = await import("../src/availability/index.js");
+    const { getPricing } = await import("../src/pricing/index.js");
+
+    vi.mocked(checkAvailability).mockResolvedValue({ available: true, premium: false });
+    vi.mocked(getPricing).mockResolvedValue({
+      prices: [
+        {
+          registrar: "porkbun",
+          year1_usd_cents: 1025,
+          renewal_usd_cents: 1125,
+          transfer_usd_cents: 1025,
+          url: null,
+          price_updated_at: "2026-06-30T00:00:00Z",
+        },
+      ],
+      stale: true,
+    });
+
+    const result = await checkDomain("stale-cache.com");
+    expect(result.pricing_stale).toBe(true);
+  });
+
   it("returns empty prices for taken domain", async () => {
     const { checkAvailability } = await import("../src/availability/index.js");
     vi.mocked(checkAvailability).mockResolvedValue({ available: false, premium: false });
@@ -106,5 +129,27 @@ describe("checkDomains", () => {
     expect(batch.errors).toEqual([
       { domain: "bad.com", reason: "network error" },
     ]);
+  });
+
+  it("limits concurrent domain checks to 5", async () => {
+    const { checkAvailability } = await import("../src/availability/index.js");
+    const { getPricing } = await import("../src/pricing/index.js");
+
+    let inFlight = 0;
+    let maxInFlight = 0;
+
+    vi.mocked(checkAvailability).mockImplementation(async () => {
+      inFlight++;
+      maxInFlight = Math.max(maxInFlight, inFlight);
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      inFlight--;
+      return { available: null, premium: false };
+    });
+    vi.mocked(getPricing).mockResolvedValue({ prices: [], stale: false });
+
+    const domains = Array.from({ length: 8 }, (_, i) => `test${i}.com`);
+    await checkDomains(domains);
+
+    expect(maxInFlight).toBeLessThanOrEqual(5);
   });
 });
