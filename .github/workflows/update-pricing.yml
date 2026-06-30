@@ -21,12 +21,8 @@ jobs:
       - run: npm ci
 
       - name: Run pricing scraper
+        # Porkbun's pricing endpoint is public — no keys/secrets required.
         run: node scripts/scrape-pricing.mjs
-        env:
-          PORKBUN_API_KEY: ${{ secrets.PORKBUN_API_KEY }}
-          PORKBUN_SECRET: ${{ secrets.PORKBUN_SECRET }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Check for changes
         id: changes

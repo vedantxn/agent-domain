@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * Pricing scraper — runs in CI with maintainer's API keys.
- * Fetches TLD pricing from registrar APIs and writes data/pricing.json.
+ * Pricing scraper — runs hourly in CI and writes data/pricing.json.
+ * Source: Porkbun's public pricing endpoint (no API keys required).
  *
- * Usage: PORKBUN_API_KEY=x PORKBUN_SECRET=x CLOUDFLARE_API_TOKEN=x CLOUDFLARE_ACCOUNT_ID=x node scripts/scrape-pricing.mjs
+ * Usage: node scripts/scrape-pricing.mjs
  */
 
 import { writeFileSync, readFileSync } from "node:fs";
@@ -18,16 +18,17 @@ async function scrapePorkbun() {
   const apiKey = process.env.PORKBUN_API_KEY;
   const secret = process.env.PORKBUN_SECRET;
 
-  if (!apiKey || !secret) {
-    console.warn("PORKBUN: skipping (no API key)");
-    return null;
-  }
+  // pricing/get is a public endpoint: it returns the full TLD price list with
+  // no authentication. We send credentials only if they happen to be set
+  // (harmless, and ready for any future authenticated endpoints).
+  const body =
+    apiKey && secret ? { apikey: apiKey, secretapikey: secret } : {};
 
   try {
     const res = await fetch("https://api.porkbun.com/api/json/v3/pricing/get", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ apikey: apiKey, secretapikey: secret }),
+      body: JSON.stringify(body),
     });
 
     if (!res.ok) {
@@ -58,83 +59,6 @@ async function scrapePorkbun() {
     console.warn(`PORKBUN: error - ${err.message}`);
     return null;
   }
-}
-
-const TRACKED_TLDS = ["com", "io", "ai", "dev", "net", "org", "xyz", "app"];
-
-function probeDomainsForTld(tld) {
-  return [
-    `agentdomain-probe-${tld}.${tld}`,
-    `zzzdapriceprobe${tld}.${tld}`,
-    `agentdomain-price-probe-${tld}.${tld}`,
-  ];
-}
-
-async function scrapeCloudflare() {
-  const token = process.env.CLOUDFLARE_API_TOKEN;
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-
-  if (!token || !accountId) {
-    console.warn("CLOUDFLARE: skipping (no API token or account ID)");
-    return null;
-  }
-
-  const results = {};
-  const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/registrar/domain-check`;
-
-  for (const tld of TRACKED_TLDS) {
-    let priced = false;
-
-    for (const domain of probeDomainsForTld(tld)) {
-      try {
-        const res = await fetch(url, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ domains: [domain] }),
-        });
-
-        if (!res.ok) {
-          console.warn(`CLOUDFLARE: ${tld} API returned ${res.status}`);
-          break;
-        }
-
-        const data = await res.json();
-        const entry = data?.result?.domains?.[0];
-        if (!entry?.registrable || !entry.pricing) {
-          continue;
-        }
-
-        const reg = parseFloat(entry.pricing.registration_cost);
-        const ren = parseFloat(entry.pricing.renewal_cost);
-        if (Number.isNaN(reg) || Number.isNaN(ren)) {
-          continue;
-        }
-
-        results[tld] = {
-          registrar: "cloudflare",
-          year1_usd_cents: Math.round(reg * 100),
-          renewal_usd_cents: Math.round(ren * 100),
-          transfer_usd_cents: Math.round(reg * 100),
-          url: "https://www.cloudflare.com/products/registrar/",
-        };
-        priced = true;
-        break;
-      } catch (err) {
-        console.warn(`CLOUDFLARE: ${tld} error - ${err.message}`);
-        break;
-      }
-    }
-
-    if (!priced) {
-      console.warn(`CLOUDFLARE: could not price TLD .${tld}`);
-    }
-  }
-
-  console.log(`CLOUDFLARE: scraped ${Object.keys(results).length} TLDs`);
-  return Object.keys(results).length > 0 ? results : null;
 }
 
 /**
@@ -235,13 +159,8 @@ async function main() {
   }
 
   const porkbunData = await scrapePorkbun();
-  const cloudflareData = await scrapeCloudflare();
 
-  const output = mergePricing(
-    existing,
-    { porkbun: porkbunData, cloudflare: cloudflareData },
-    now
-  );
+  const output = mergePricing(existing, { porkbun: porkbunData }, now);
 
   writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2));
   console.log(

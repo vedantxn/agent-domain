@@ -24,9 +24,7 @@ npx agent-domain check mycoolstartup.dev
   "domain": "mycoolstartup.dev",
   "available": true,
   "prices": [
-    { "registrar": "porkbun", "year1_usd_cents": 999, "renewal_usd_cents": 1625 },
-    { "registrar": "cloudflare", "year1_usd_cents": 1100, "renewal_usd_cents": 1100 },
-    { "registrar": "spaceship", "year1_usd_cents": 1099, "renewal_usd_cents": 1599 }
+    { "registrar": "porkbun", "year1_usd_cents": 999, "renewal_usd_cents": 1625 }
   ],
   "cheapest": { "registrar": "porkbun", "year1_usd_cents": 999 }
 }
@@ -125,7 +123,7 @@ Tools available:
 
 ## How it works
 
-1. **Pricing data** is verified hourly against registrar APIs (Porkbun, Cloudflare, Namecheap, GoDaddy, Spaceship) by the maintainer's CI and published as a static JSON file. Registrar list prices are per-TLD and change rarely, so each price carries a `price_updated_at` marking when it last actually changed (not when it was last fetched). Your CLI fetches this file and caches it locally for 1 hour. No API keys needed.
+1. **Pricing data** is verified hourly against Porkbun's public pricing API by the maintainer's CI and published as a static JSON file. Registrar list prices are per-TLD and change rarely, so each price carries a `price_updated_at` marking when it last actually changed (not when it was last fetched). Your CLI fetches this file and caches it locally for 1 hour. No API keys needed.
 
 2. **Availability** is checked live via RDAP (the modern replacement for WHOIS). Free, standardized, no authentication required.
 
@@ -133,15 +131,12 @@ Tools available:
 
 ## Pricing coverage
 
-Currently tracking pricing for 8+ TLDs across 5 registrars:
+Currently tracking pricing across 8 TLDs from Porkbun (their full public price list). More registrars will be added as live scrapers are built for each:
 
-| Registrar | Coverage |
-|-----------|----------|
-| Porkbun | All TLDs they sell |
-| Cloudflare | At-cost pricing |
-| Namecheap | Major TLDs |
-| GoDaddy | Major TLDs |
-| Spaceship | Major TLDs |
+| Registrar | Status |
+|-----------|--------|
+| Porkbun | Live (all TLDs they sell) |
+| Cloudflare, Namecheap, GoDaddy, Spaceship | Planned |
 
 Pricing is verified hourly. Since per-TLD list prices change rarely, `price_updated_at` reflects when a price last changed rather than the verification time.
 

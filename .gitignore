@@ -2,3 +2,7 @@ node_modules/
 dist/
 *.tsbuildinfo
 .DS_Store
+
+# Local secrets — never commit. CI reads from GitHub Actions secrets, not this file.
+.env
+.env.local

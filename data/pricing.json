@@ -1,78 +1,104 @@
 {
   "version": 1,
   "updated_at": "2026-06-30T00:00:00Z",
-  "registrars": ["porkbun", "cloudflare", "namecheap", "godaddy", "spaceship"],
+  "registrars": [
+    "porkbun"
+  ],
   "tlds": {
     "com": {
       "prices": [
-        { "registrar": "spaceship", "year1_usd_cents": 899, "renewal_usd_cents": 1298, "transfer_usd_cents": 899, "url": "https://www.spaceship.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "cloudflare", "year1_usd_cents": 1018, "renewal_usd_cents": 1018, "transfer_usd_cents": 1018, "url": "https://www.cloudflare.com/products/registrar/", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "porkbun", "year1_usd_cents": 1025, "renewal_usd_cents": 1125, "transfer_usd_cents": 1025, "url": "https://porkbun.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "namecheap", "year1_usd_cents": 999, "renewal_usd_cents": 1498, "transfer_usd_cents": 999, "url": "https://www.namecheap.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "godaddy", "year1_usd_cents": 1299, "renewal_usd_cents": 2299, "transfer_usd_cents": 1299, "url": "https://www.godaddy.com", "price_updated_at": "2026-06-30T00:00:00Z" }
+        {
+          "registrar": "porkbun",
+          "year1_usd_cents": 1025,
+          "renewal_usd_cents": 1125,
+          "transfer_usd_cents": 1025,
+          "url": "https://porkbun.com",
+          "price_updated_at": "2026-06-30T00:00:00Z"
+        }
       ]
     },
     "io": {
       "prices": [
-        { "registrar": "porkbun", "year1_usd_cents": 2812, "renewal_usd_cents": 5180, "transfer_usd_cents": 2812, "url": "https://porkbun.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "cloudflare", "year1_usd_cents": 3600, "renewal_usd_cents": 3600, "transfer_usd_cents": 3600, "url": "https://www.cloudflare.com/products/registrar/", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "namecheap", "year1_usd_cents": 2988, "renewal_usd_cents": 4488, "transfer_usd_cents": 2988, "url": "https://www.namecheap.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "spaceship", "year1_usd_cents": 3299, "renewal_usd_cents": 4599, "transfer_usd_cents": 3299, "url": "https://www.spaceship.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "godaddy", "year1_usd_cents": 3999, "renewal_usd_cents": 5999, "transfer_usd_cents": 3999, "url": "https://www.godaddy.com", "price_updated_at": "2026-06-30T00:00:00Z" }
+        {
+          "registrar": "porkbun",
+          "year1_usd_cents": 2812,
+          "renewal_usd_cents": 5180,
+          "transfer_usd_cents": 2812,
+          "url": "https://porkbun.com",
+          "price_updated_at": "2026-06-30T00:00:00Z"
+        }
       ]
     },
     "ai": {
       "prices": [
-        { "registrar": "porkbun", "year1_usd_cents": 2499, "renewal_usd_cents": 8270, "transfer_usd_cents": 2499, "url": "https://porkbun.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "spaceship", "year1_usd_cents": 4499, "renewal_usd_cents": 7499, "transfer_usd_cents": 4499, "url": "https://www.spaceship.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "namecheap", "year1_usd_cents": 4498, "renewal_usd_cents": 7998, "transfer_usd_cents": 4498, "url": "https://www.namecheap.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "cloudflare", "year1_usd_cents": 5800, "renewal_usd_cents": 5800, "transfer_usd_cents": 5800, "url": "https://www.cloudflare.com/products/registrar/", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "godaddy", "year1_usd_cents": 6999, "renewal_usd_cents": 8999, "transfer_usd_cents": 6999, "url": "https://www.godaddy.com", "price_updated_at": "2026-06-30T00:00:00Z" }
+        {
+          "registrar": "porkbun",
+          "year1_usd_cents": 2499,
+          "renewal_usd_cents": 8270,
+          "transfer_usd_cents": 2499,
+          "url": "https://porkbun.com",
+          "price_updated_at": "2026-06-30T00:00:00Z"
+        }
       ]
     },
     "dev": {
       "prices": [
-        { "registrar": "porkbun", "year1_usd_cents": 999, "renewal_usd_cents": 1625, "transfer_usd_cents": 999, "url": "https://porkbun.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "cloudflare", "year1_usd_cents": 1100, "renewal_usd_cents": 1100, "transfer_usd_cents": 1100, "url": "https://www.cloudflare.com/products/registrar/", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "namecheap", "year1_usd_cents": 1188, "renewal_usd_cents": 1688, "transfer_usd_cents": 1188, "url": "https://www.namecheap.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "spaceship", "year1_usd_cents": 1099, "renewal_usd_cents": 1599, "transfer_usd_cents": 1099, "url": "https://www.spaceship.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "godaddy", "year1_usd_cents": 1499, "renewal_usd_cents": 2499, "transfer_usd_cents": 1499, "url": "https://www.godaddy.com", "price_updated_at": "2026-06-30T00:00:00Z" }
+        {
+          "registrar": "porkbun",
+          "year1_usd_cents": 999,
+          "renewal_usd_cents": 1625,
+          "transfer_usd_cents": 999,
+          "url": "https://porkbun.com",
+          "price_updated_at": "2026-06-30T00:00:00Z"
+        }
       ]
     },
     "net": {
       "prices": [
-        { "registrar": "spaceship", "year1_usd_cents": 999, "renewal_usd_cents": 1498, "transfer_usd_cents": 999, "url": "https://www.spaceship.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "cloudflare", "year1_usd_cents": 1068, "renewal_usd_cents": 1068, "transfer_usd_cents": 1068, "url": "https://www.cloudflare.com/products/registrar/", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "porkbun", "year1_usd_cents": 1075, "renewal_usd_cents": 1175, "transfer_usd_cents": 1075, "url": "https://porkbun.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "namecheap", "year1_usd_cents": 1098, "renewal_usd_cents": 1598, "transfer_usd_cents": 1098, "url": "https://www.namecheap.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "godaddy", "year1_usd_cents": 1499, "renewal_usd_cents": 2299, "transfer_usd_cents": 1499, "url": "https://www.godaddy.com", "price_updated_at": "2026-06-30T00:00:00Z" }
+        {
+          "registrar": "porkbun",
+          "year1_usd_cents": 1075,
+          "renewal_usd_cents": 1175,
+          "transfer_usd_cents": 1075,
+          "url": "https://porkbun.com",
+          "price_updated_at": "2026-06-30T00:00:00Z"
+        }
       ]
     },
     "org": {
       "prices": [
-        { "registrar": "cloudflare", "year1_usd_cents": 1037, "renewal_usd_cents": 1037, "transfer_usd_cents": 1037, "url": "https://www.cloudflare.com/products/registrar/", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "porkbun", "year1_usd_cents": 1050, "renewal_usd_cents": 1150, "transfer_usd_cents": 1050, "url": "https://porkbun.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "spaceship", "year1_usd_cents": 999, "renewal_usd_cents": 1398, "transfer_usd_cents": 999, "url": "https://www.spaceship.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "namecheap", "year1_usd_cents": 1098, "renewal_usd_cents": 1598, "transfer_usd_cents": 1098, "url": "https://www.namecheap.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "godaddy", "year1_usd_cents": 1199, "renewal_usd_cents": 2099, "transfer_usd_cents": 1199, "url": "https://www.godaddy.com", "price_updated_at": "2026-06-30T00:00:00Z" }
+        {
+          "registrar": "porkbun",
+          "year1_usd_cents": 1050,
+          "renewal_usd_cents": 1150,
+          "transfer_usd_cents": 1050,
+          "url": "https://porkbun.com",
+          "price_updated_at": "2026-06-30T00:00:00Z"
+        }
       ]
     },
     "xyz": {
       "prices": [
-        { "registrar": "spaceship", "year1_usd_cents": 199, "renewal_usd_cents": 1199, "transfer_usd_cents": 199, "url": "https://www.spaceship.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "porkbun", "year1_usd_cents": 299, "renewal_usd_cents": 1225, "transfer_usd_cents": 299, "url": "https://porkbun.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "namecheap", "year1_usd_cents": 398, "renewal_usd_cents": 1298, "transfer_usd_cents": 398, "url": "https://www.namecheap.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "cloudflare", "year1_usd_cents": 1000, "renewal_usd_cents": 1000, "transfer_usd_cents": 1000, "url": "https://www.cloudflare.com/products/registrar/", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "godaddy", "year1_usd_cents": 299, "renewal_usd_cents": 1499, "transfer_usd_cents": 299, "url": "https://www.godaddy.com", "price_updated_at": "2026-06-30T00:00:00Z" }
+        {
+          "registrar": "porkbun",
+          "year1_usd_cents": 299,
+          "renewal_usd_cents": 1225,
+          "transfer_usd_cents": 299,
+          "url": "https://porkbun.com",
+          "price_updated_at": "2026-06-30T00:00:00Z"
+        }
       ]
     },
     "app": {
       "prices": [
-        { "registrar": "porkbun", "year1_usd_cents": 1199, "renewal_usd_cents": 1999, "transfer_usd_cents": 1199, "url": "https://porkbun.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "cloudflare", "year1_usd_cents": 1400, "renewal_usd_cents": 1400, "transfer_usd_cents": 1400, "url": "https://www.cloudflare.com/products/registrar/", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "namecheap", "year1_usd_cents": 1398, "renewal_usd_cents": 2198, "transfer_usd_cents": 1398, "url": "https://www.namecheap.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "spaceship", "year1_usd_cents": 1199, "renewal_usd_cents": 1899, "transfer_usd_cents": 1199, "url": "https://www.spaceship.com", "price_updated_at": "2026-06-30T00:00:00Z" },
-        { "registrar": "godaddy", "year1_usd_cents": 1999, "renewal_usd_cents": 2999, "transfer_usd_cents": 1999, "url": "https://www.godaddy.com", "price_updated_at": "2026-06-30T00:00:00Z" }
+        {
+          "registrar": "porkbun",
+          "year1_usd_cents": 1199,
+          "renewal_usd_cents": 1999,
+          "transfer_usd_cents": 1199,
+          "url": "https://porkbun.com",
+          "price_updated_at": "2026-06-30T00:00:00Z"
+        }
       ]
     }
   }

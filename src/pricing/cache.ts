@@ -4,7 +4,7 @@ import { homedir } from "node:os";
 import type { PricingData } from "../types.js";
 
 const PRICING_CDN_URL =
-  "https://raw.githubusercontent.com/vedantnn/agent-domain/main/data/pricing.json";
+  "https://raw.githubusercontent.com/vedantxn/agent-domain/main/data/pricing.json";
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 function getCacheDir(): string {
