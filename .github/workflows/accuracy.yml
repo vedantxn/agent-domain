@@ -1,0 +1,23 @@
+name: Price Accuracy Check
+
+on:
+  schedule:
+    - cron: "0 8 * * 1" # Weekly Monday 8am UTC
+  workflow_dispatch:
+
+jobs:
+  accuracy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Check pricing accuracy
+        env:
+          PORKBUN_API_KEY: ${{ secrets.PORKBUN_API_KEY }}
+          PORKBUN_SECRET: ${{ secrets.PORKBUN_SECRET }}
+        run: node scripts/check-pricing-accuracy.mjs
