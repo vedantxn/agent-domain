@@ -39,27 +39,49 @@ function readCache(): PricingData | null {
   }
 }
 
-function writeCache(data: PricingData): void {
-  const dir = getCacheDir();
-  mkdirSync(dir, { recursive: true });
-  writeFileSync(getCachePath(), JSON.stringify(data));
+export function writeCache(data: PricingData): boolean {
+  try {
+    const dir = getCacheDir();
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(getCachePath(), JSON.stringify(data));
+    return true;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "unknown error";
+    console.error(`Warning: failed to write pricing cache: ${message}`);
+    return false;
+  }
 }
 
 async function fetchFromCdn(): Promise<PricingData | null> {
+  let res: Response;
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10000);
 
-    const res = await fetch(PRICING_CDN_URL, { signal: controller.signal });
+    res = await fetch(PRICING_CDN_URL, { signal: controller.signal });
     clearTimeout(timeout);
-
-    if (!res.ok) return null;
-    const data = (await res.json()) as PricingData;
-    writeCache(data);
-    return data;
-  } catch {
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "unknown error";
+    console.error(`Warning: failed to fetch pricing from CDN: ${message}`);
     return null;
   }
+
+  if (!res.ok) {
+    console.error(`Warning: pricing CDN returned HTTP ${res.status}`);
+    return null;
+  }
+
+  let data: PricingData;
+  try {
+    data = (await res.json()) as PricingData;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "unknown error";
+    console.error(`Warning: failed to parse pricing CDN response: ${message}`);
+    return null;
+  }
+
+  writeCache(data);
+  return data;
 }
 
 export async function getPricingData(): Promise<{

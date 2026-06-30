@@ -64,7 +64,7 @@ export async function checkDomain(domain: string): Promise<DomainResult> {
 
   const { available, premium } = await checkAvailability(normalized);
   const { prices, stale } =
-    available === false ? { prices: [], stale: false } : await getPricing(tld);
+    available === true ? await getPricing(tld) : { prices: [], stale: false };
   const cheapest = prices.length > 0 ? prices[0] : null;
 
   return {

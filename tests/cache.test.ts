@@ -103,4 +103,30 @@ describe("getPricingData", () => {
     expect(result.data).toBeNull();
     expect(result.stale).toBe(false);
   });
+
+  it("returns fetched data when cache write fails", async () => {
+    const { existsSync, writeFileSync } = await import("node:fs");
+    vi.mocked(existsSync).mockReturnValue(false);
+    vi.mocked(writeFileSync).mockImplementation(() => {
+      throw new Error("EACCES: permission denied");
+    });
+
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => sampleData,
+    } as Response);
+
+    const stderr = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const { getPricingData } = await import("../src/pricing/cache.js");
+    const result = await getPricingData();
+
+    expect(result.data?.version).toBe(1);
+    expect(result.stale).toBe(false);
+    expect(stderr).toHaveBeenCalledWith(
+      expect.stringContaining("failed to write pricing cache")
+    );
+
+    stderr.mockRestore();
+  });
 });

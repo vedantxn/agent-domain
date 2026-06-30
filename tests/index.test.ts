@@ -60,6 +60,7 @@ describe("checkDomain", () => {
 
   it("returns empty prices for taken domain", async () => {
     const { checkAvailability } = await import("../src/availability/index.js");
+    const { getPricing } = await import("../src/pricing/index.js");
     vi.mocked(checkAvailability).mockResolvedValue({ available: false, premium: false });
 
     const result = await checkDomain("google.com");
@@ -67,6 +68,7 @@ describe("checkDomain", () => {
     expect(result.available).toBe(false);
     expect(result.prices).toEqual([]);
     expect(result.cheapest).toBeNull();
+    expect(getPricing).not.toHaveBeenCalled();
   });
 
   it("throws on invalid domain (spaces)", async () => {
@@ -81,24 +83,36 @@ describe("checkDomain", () => {
     await expect(checkDomain("")).rejects.toThrow("empty domain");
   });
 
+  it("skips pricing when availability is unknown", async () => {
+    const { checkAvailability } = await import("../src/availability/index.js");
+    const { getPricing } = await import("../src/pricing/index.js");
+    vi.mocked(checkAvailability).mockResolvedValue({ available: null, premium: false });
+
+    const result = await checkDomain("unknown.com");
+
+    expect(result.available).toBeNull();
+    expect(result.prices).toEqual([]);
+    expect(getPricing).not.toHaveBeenCalled();
+  });
+
   it("handles punycode (ASCII) domains", async () => {
     const { checkAvailability } = await import("../src/availability/index.js");
     const { getPricing } = await import("../src/pricing/index.js");
     vi.mocked(checkAvailability).mockResolvedValue({ available: null, premium: false });
-    vi.mocked(getPricing).mockResolvedValue({ prices: [], stale: false });
 
     const result = await checkDomain("test.xn--zckzah");
     expect(result.domain).toBe("test.xn--zckzah");
+    expect(getPricing).not.toHaveBeenCalled();
   });
 
   it("normalizes domain to lowercase", async () => {
     const { checkAvailability } = await import("../src/availability/index.js");
     const { getPricing } = await import("../src/pricing/index.js");
     vi.mocked(checkAvailability).mockResolvedValue({ available: null, premium: false });
-    vi.mocked(getPricing).mockResolvedValue({ prices: [], stale: false });
 
     const result = await checkDomain("EXAMPLE.COM");
     expect(result.domain).toBe("example.com");
+    expect(getPricing).not.toHaveBeenCalled();
   });
 });
 
@@ -145,11 +159,11 @@ describe("checkDomains", () => {
       inFlight--;
       return { available: null, premium: false };
     });
-    vi.mocked(getPricing).mockResolvedValue({ prices: [], stale: false });
 
     const domains = Array.from({ length: 8 }, (_, i) => `test${i}.com`);
     await checkDomains(domains);
 
     expect(maxInFlight).toBeLessThanOrEqual(5);
+    expect(getPricing).not.toHaveBeenCalled();
   });
 });
