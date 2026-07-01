@@ -10,18 +10,38 @@
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     background: #fff;
     color: #000;
+    min-height: 100vh;
     display: flex;
+    flex-direction: column;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    flex-shrink: 0;
+  }
+  header h1 { font-size: 20px; font-weight: 700; margin: 0; }
+  header nav { font-size: 12px; }
+  header a { color: inherit; text-decoration: none; }
+  header a:hover { text-decoration: underline; }
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 24px;
+    max-width: 640px;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+    text-align: center;
   }
-  main { padding: 24px; max-width: 640px; width: 100%; box-sizing: border-box; }
-  .top { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 6px; }
-  h1 { font-size: 20px; font-weight: 700; margin: 0; }
-  .links { font-size: 12px; white-space: nowrap; }
-  .links a { color: inherit; text-decoration: none; }
-  .links a:hover { text-decoration: underline; }
   p { margin: 0 0 18px; line-height: 1.5; }
   .label { font-size: 12px; margin: 0 0 8px; }
+  .cmds, .agent { width: 100%; max-width: 520px; }
+  .cmds { text-align: left; }
   .row {
     display: flex;
     align-items: stretch;
@@ -37,7 +57,6 @@
     white-space: pre;
     min-width: 0;
   }
-  .agent pre { white-space: pre-wrap; word-break: break-word; }
   button.copy {
     font: inherit;
     font-size: 12px;
@@ -51,21 +70,22 @@
   button.copy:hover { background: #f5f5f5; }
   button.copy.copied { background: #000; color: #fff; }
   .agent { margin-top: 20px; }
-  nav { margin-top: 20px; font-size: 12px; }
-  nav a { color: inherit; }
+  .agent .copy { padding: 10px 16px; }
 </style>
 </head>
 <body>
-<main>
-  <div class="top">
-    <h1>domainpeek</h1>
-    <div class="links">
-      <a href="https://github.com/vedantxn/domainpeek">GitHub</a>
-      &nbsp;&middot;&nbsp;
-      <a href="https://x.com/vedantxn">x.com/vedantxn</a>
-    </div>
-  </div>
+<header>
+  <h1>domainpeek</h1>
+  <nav>
+    <a href="docs/">Docs</a>
+    &nbsp;&middot;&nbsp;
+    <a href="https://github.com/vedantxn/domainpeek">GitHub</a>
+    &nbsp;&middot;&nbsp;
+    <a href="https://x.com/vedantxn">x.com/vedantxn</a>
+  </nav>
+</header>
 
+<main>
   <p>Keyless domain intelligence from the command line, and for AI agents.
      Availability, cheapest price with a register link, and full RDAP/DNS intel.
      No API keys, no config.</p>
@@ -87,15 +107,8 @@
 
   <div class="agent">
     <p class="label">Paste into your agent</p>
-    <div class="row">
-      <pre>Use domainpeek for domain intelligence — availability, cheapest registrar price, register links, and RDAP/DNS intel. Read https://vedantxn.github.io/domainpeek/docs/skill.md then run via npx domainpeek (check, find, guard). Keyless, no API keys, no config.</pre>
-      <button type="button" class="copy" data-copy="Use domainpeek for domain intelligence — availability, cheapest registrar price, register links, and RDAP/DNS intel. Read https://vedantxn.github.io/domainpeek/docs/skill.md then run via npx domainpeek (check, find, guard). Keyless, no API keys, no config.">copy</button>
-    </div>
+    <button type="button" class="copy" data-copy="Use domainpeek for domain intelligence — availability, cheapest registrar price, register links, and RDAP/DNS intel. Read https://vedantxn.github.io/domainpeek/docs/skill.md then run via npx domainpeek (check, find, guard). Keyless, no API keys, no config.">copy</button>
   </div>
-
-  <nav>
-    <a href="docs/">Docs</a>
-  </nav>
 </main>
 <script>
 document.querySelectorAll('button.copy').forEach((btn) => {
